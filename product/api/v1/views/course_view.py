@@ -87,18 +87,6 @@ class CourseViewSet(viewsets.ModelViewSet):
                 sub = Subscription(course_id=pk, user_id=request.user.id)
                 sub.save()
 
-                groups = Group.objects.filter(course_id=course.pk)
-                users_in_group = groups[0].users.count()
-                group_id = groups[0].id
-                for group in groups:
-                    users_amount = group.users.count()
-                    if users_amount < users_in_group:
-                        group_id = group.id
-                        users_in_group = users_amount
-
-                needed_group = Group.objects.get(id=group_id)
-                needed_group.users.add(request.user.id)
-
                 return Response(
                     data={201: 'Done'},
                     status=status.HTTP_201_CREATED
