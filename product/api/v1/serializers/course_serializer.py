@@ -49,10 +49,11 @@ class StudentSerializer(serializers.ModelSerializer):
 class GroupSerializer(serializers.ModelSerializer):
     """Список групп."""
 
-    # TODO Доп. задание
+    users = StudentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Group
+        fields = '__all__'
 
 
 class CreateGroupSerializer(serializers.ModelSerializer):
@@ -61,7 +62,6 @@ class CreateGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = (
-            'title',
             'course',
         )
 
@@ -85,21 +85,47 @@ class CourseSerializer(serializers.ModelSerializer):
     groups_filled_percent = serializers.SerializerMethodField(read_only=True)
     demand_course_percent = serializers.SerializerMethodField(read_only=True)
 
+    def get_lessons(self, obj):
+        lessons = Lesson.objects.filter(course_id=obj.pk)
+        return lessons
+
     def get_lessons_count(self, obj):
         """Количество уроков в курсе."""
-        # TODO Доп. задание
+
+        lessons = Lesson.objects.filter(course_id=obj.pk)
+        return len(lessons)
+
+    def count_students(self, groups):
+        """Алгоритм подсчета всех студентов курса"""
+
+        students = 0
+        for group in groups:
+            students += group.users.count()
+        return students
 
     def get_students_count(self, obj):
         """Общее количество студентов на курсе."""
-        # TODO Доп. задание
+
+        groups = Group.objects.filter(course_id=obj.pk)
+        students = self.count_students(groups)
+        return students
 
     def get_groups_filled_percent(self, obj):
         """Процент заполнения групп, если в группе максимум 30 чел.."""
-        # TODO Доп. задание
+
+        groups = Group.objects.filter(course_id=obj.pk)
+        students = self.count_students(groups)
+        percent = students / 300 * 100
+        return percent
 
     def get_demand_course_percent(self, obj):
         """Процент приобретения курса."""
-        # TODO Доп. задание
+
+        all_users = User.objects.all().count()
+        groups = Group.objects.filter(course_id=obj.pk)
+        students = self.count_students(groups)
+        percent = students / all_users * 100
+        return percent
 
     class Meta:
         model = Course
