@@ -80,6 +80,7 @@ class Lesson(models.Model):
     course = models.ForeignKey(
         to=Course,
         on_delete=models.CASCADE,
+        related_name='lessons',
     )
 
     class Meta:

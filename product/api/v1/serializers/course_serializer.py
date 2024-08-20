@@ -79,7 +79,7 @@ class MiniLessonSerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
     """Список курсов."""
 
-    lessons = MiniLessonSerializer(many=True, read_only=True)
+    lessons = serializers.StringRelatedField(many=True)
     lessons_count = serializers.SerializerMethodField(read_only=True)
     students_count = serializers.SerializerMethodField(read_only=True)
     groups_filled_percent = serializers.SerializerMethodField(read_only=True)
