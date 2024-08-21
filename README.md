@@ -12,6 +12,8 @@
 ## /api/v1/auth/token/login/ ['POST']
 Аутентификация и авторизация пользователя. Выдача токена.
 
+**Поля**: *email, password*
+
 **Headers**: *Authorization: Token ***your-token****
 
 # Main Endpoints
